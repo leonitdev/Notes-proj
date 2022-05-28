@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import helmet from 'helmet';
 import { mongoConnectionString } from './infrastructure/configs';
-import { UserModule } from './modules/users/user.module';
+import { NoteModule } from './modules/notes/note.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { UserModule } from './modules/users/user.module';
       isGlobal: true,
     }),
     /** Created Modules **/
-    UserModule,
+    NoteModule,
   ],
 
   controllers: [],
