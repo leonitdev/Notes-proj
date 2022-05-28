@@ -19,11 +19,12 @@ export class NoteService {
 
   async createNote(body: CreateNoteDto) {
     const note = await this.repository.createNote(body);
+    console.log('note: ', note);
 
     return new CreateResponseObject<Note>(
       true,
       HttpStatus.CREATED,
-      `urlLink/${note.id}`,
+      `localhost:3000/api/v1/notes/${note.id}`,
       note,
     );
   }
@@ -39,13 +40,13 @@ export class NoteService {
     return new CreateResponseObject<Note>(
       true,
       HttpStatus.OK,
-      `urlLink/${note.id}`,
+      `localhost:3000/api/v1/notes/${note.id}`,
       note,
     );
   }
 
-  async deleteNote(id: string, body: UpdateNoteDto) {
-    const note = await this.repository.updateNote(id, body);
+  async deleteNote(id: string) {
+    const note = await this.repository.deleteNote(id);
     return new ResponseObject<Note>(true, HttpStatus.OK, note);
   }
 }

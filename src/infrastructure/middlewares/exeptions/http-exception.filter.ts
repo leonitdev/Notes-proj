@@ -16,11 +16,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const { stack, message } = exception;
 
-    // flow
-    // 1. if is array of erro messages
-    // 2. if it's nested object error with index (position)
-    // 3. format
-
     const messageError: any = exception?.getResponse();
     const isMessageErrorArray = Array.isArray(messageError?.message);
 

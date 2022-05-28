@@ -74,7 +74,9 @@ export class Note {
 
 export const NoteSchema = SchemaFactory.createForClass(Note).set('toJSON', {
   virtuals: true,
+  versionKey: false,
   transform: function (doc, ret) {
+    ret.id = ret._id;
     delete ret._id;
   },
 });

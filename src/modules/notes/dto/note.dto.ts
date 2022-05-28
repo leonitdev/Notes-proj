@@ -9,11 +9,6 @@ import {
 
 export class CreateNoteDto {
   @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty()
-  memberId: number;
-
-  @ApiProperty()
   @MaxLength(800)
   @MinLength(3)
   @IsString()
