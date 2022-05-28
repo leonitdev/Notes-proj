@@ -1,12 +1,7 @@
-import {
-  ConflictException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MongoErrorCode } from 'src/infrastructure/constants/mongo-error.constant';
-import { CreateNoteDto } from 'src/modules/notes/dto/note.dto';
+import { CreateNoteDto, UpdateNoteDto } from 'src/modules/notes/dto/note.dto';
 import { Note, NoteDocument } from './schema/note.schema';
 
 @Injectable()
@@ -32,16 +27,11 @@ export class NoteRepository {
 
       return item;
     } catch (error) {
-      const { code } = error;
-      if (code === MongoErrorCode.DUPLICATE_KEY) {
-        const message = `This User already exists`;
-        throw new ConflictException(message);
-      }
       throw new InternalServerErrorException(error);
     }
   }
 
-  async getUserById(id: string): Promise<Note> {
+  async getNoteById(id: string): Promise<Note> {
     try {
       return this.model.findOne({ _id: id }).exec();
     } catch (error) {
@@ -49,22 +39,17 @@ export class NoteRepository {
     }
   }
 
-  async updateNote(query: any): Promise<Note[]> {
+  async updateNote(id: string, body: UpdateNoteDto): Promise<Note> {
     try {
-      return this.model.find(query).exec();
+      return this.model.findOneAndUpdate({ _id: id }, { set: body }).exec();
     } catch (error) {
-      const { code } = error;
-      if (code === MongoErrorCode.DUPLICATE_KEY) {
-        const message = `This Note already exists`;
-        throw new ConflictException(message);
-      }
       throw new InternalServerErrorException(error);
     }
   }
 
-  async deleteNote(query: any): Promise<Note[]> {
+  async deleteNote(id: string): Promise<Note> {
     try {
-      return this.model.find(query).exec();
+      return this.model.findOneAndDelete({ _id: id }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
