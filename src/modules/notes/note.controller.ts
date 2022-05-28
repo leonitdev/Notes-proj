@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { NoteService } from 'src/modules/notes/note.service';
@@ -22,31 +32,43 @@ export class NoteController {
   @Get(':id')
   async getNoteById(@Res() res: Response, @Param() id: string) {
     const item = await this.service.getNoteById(id);
-    return res.status(200).json(item);
+    const { status } = item;
+
+    return res.status(status).json(item);
   }
 
   @ApiCreatedResponse({ type: Note })
   @Post()
   async createNote(@Res() res: Response, @Body() body: CreateNoteDto) {
     const item = await this.service.createNote(body);
-    return res.status(201).json(item);
+    const { status } = item;
+    return res.status(status).json(item);
   }
 
   @ApiOkResponse({ type: Note })
-  @Get(':id')
+  @Put(':id')
   async updateNote(
     @Res() res: Response,
     @Param() id: string,
     @Body() body: UpdateNoteDto,
   ) {
     const item = await this.service.updateNote(id, body);
-    return res.status(200).json(item);
+    const { status } = item;
+    return res.status(status).json(item);
   }
 
   @ApiOkResponse({ type: Note })
-  @Get(':id')
+  @Delete(':id')
   async deleteNote(@Res() res: Response, @Param() id: string) {
     const item = await this.service.deleteNote(id);
+    const { status } = item;
+    return res.status(status).json(item);
+  }
+
+  @ApiOkResponse({ type: Note })
+  @Delete()
+  async deleteAllNote(@Res() res: Response) {
+    const item = await this.service.deleteAllNotes();
     return res.status(200).json(item);
   }
 }

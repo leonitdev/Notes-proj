@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Note } from 'src/repositories/schema/note.schema';
 import {
   CreateResponseObject,
@@ -7,46 +7,53 @@ import {
 } from 'src/types/response/api.response';
 import { NoteRepository } from 'src/repositories/note.repository';
 import { CreateNoteDto, UpdateNoteDto } from './dto/note.dto';
+import { baseUrl } from 'src/infrastructure/configs';
 
 @Injectable()
 export class NoteService {
   constructor(private readonly repository: NoteRepository) {}
 
   async getNotes(query) {
-    const Notes = await this.repository.getNotes(query);
-    return new ResponseArray<Note>(true, HttpStatus.OK, Notes);
+    const notes = await this.repository.getNotes(query);
+    return new ResponseArray<Note>(true, HttpStatus.OK, notes);
   }
 
   async createNote(body: CreateNoteDto) {
     const note = await this.repository.createNote(body);
-    console.log('note: ', note);
-
     return new CreateResponseObject<Note>(
       true,
       HttpStatus.CREATED,
-      `localhost:3000/api/v1/notes/${note.id}`,
+      `${baseUrl}/notes/${note.id}`,
       note,
     );
   }
 
   async getNoteById(id: string) {
     const note = await this.repository.getNoteById(id);
-    return new ResponseObject<Note>(true, HttpStatus.CREATED, note);
+    if (!note) {
+      throw new NotFoundException(`Note with id, couldn't be found!`);
+    }
+    return new ResponseObject<Note>(true, HttpStatus.OK, note);
   }
 
   async updateNote(id: string, body: UpdateNoteDto) {
-    const note = await this.repository.updateNote(id, body);
-
-    return new CreateResponseObject<Note>(
-      true,
-      HttpStatus.OK,
-      `localhost:3000/api/v1/notes/${note.id}`,
-      note,
-    );
+    const updatedNote = await this.repository.updateNote(id, body);
+    if (!updatedNote) {
+      throw new NotFoundException('This note does not exits..');
+    }
+    return new ResponseObject<Note>(true, HttpStatus.OK, updatedNote);
   }
 
   async deleteNote(id: string) {
-    const note = await this.repository.deleteNote(id);
-    return new ResponseObject<Note>(true, HttpStatus.OK, note);
+    const deletedNote = await this.repository.deleteNote(id);
+    if (!deletedNote) {
+      throw new NotFoundException(`Note with this id, couldn't be found!`);
+    }
+    return new ResponseObject<Note>(true, HttpStatus.OK, deletedNote);
+  }
+
+  async deleteAllNotes() {
+    const deletedNotes = await this.repository.deleteAllNotes();
+    return new ResponseObject<Note>(true, HttpStatus.OK, deletedNotes);
   }
 }

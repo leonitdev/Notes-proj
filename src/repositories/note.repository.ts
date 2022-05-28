@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel, Schema } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateNoteDto, UpdateNoteDto } from 'src/modules/notes/dto/note.dto';
 import { Note, NoteDocument } from './schema/note.schema';
 
@@ -33,8 +33,7 @@ export class NoteRepository {
 
   async getNoteById(id: string): Promise<Note> {
     try {
-      // fix converting to objectId
-      return this.model.findOne({ _id: id }).exec();
+      return this.model.findOne({ _id: new Types.ObjectId(id) }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -42,7 +41,9 @@ export class NoteRepository {
 
   async updateNote(id: string, body: UpdateNoteDto): Promise<Note> {
     try {
-      return this.model.findOneAndUpdate({ _id: id }, { set: body }).exec();
+      return this.model
+        .findOneAndUpdate({ _id: new Types.ObjectId(id) }, body, { new: true })
+        .exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -50,7 +51,17 @@ export class NoteRepository {
 
   async deleteNote(id: string): Promise<Note> {
     try {
-      return this.model.findOneAndDelete({ _id: id }).exec();
+      return this.model
+        .findOneAndDelete({ _id: new Types.ObjectId(id) })
+        .exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async deleteAllNotes(): Promise<any> {
+    try {
+      return this.model.deleteMany().exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
