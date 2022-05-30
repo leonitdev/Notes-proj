@@ -55,10 +55,10 @@ export class Note {
     type: String,
   })
   @Prop({
-    type: Date,
-    default: new Date(),
+    type: String,
+    default: new Date().toLocaleString(),
   })
-  createdAt: Date;
+  createdAt: string;
 
   /**
    *
@@ -68,7 +68,7 @@ export class Note {
     this.noteBody = noteBody;
     this.xPosition = xPosition;
     this.yPosition = yPosition;
-    this.createdAt = new Date();
+    this.createdAt = new Date().toLocaleString();
   }
 }
 

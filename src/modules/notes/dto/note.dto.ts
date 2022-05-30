@@ -12,7 +12,7 @@ export class CreateNoteDto {
   @MaxLength(800)
   @MinLength(3)
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Note must not be empty!' })
   noteBody: string;
 
   @ApiProperty()

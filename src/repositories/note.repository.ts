@@ -12,7 +12,7 @@ export class NoteRepository {
 
   async getNotes(query: any): Promise<Note[]> {
     try {
-      return this.model.find(query).exec();
+      return await this.model.find(query).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -23,7 +23,7 @@ export class NoteRepository {
       const note = new Note(body);
       const item = new this.model(note);
       note.id = item._id;
-      item.save();
+      await item.save();
 
       return note;
     } catch (error) {
@@ -33,7 +33,7 @@ export class NoteRepository {
 
   async getNoteById(id: string): Promise<Note> {
     try {
-      return this.model.findOne({ _id: new Types.ObjectId(id) }).exec();
+      return await this.model.findOne({ _id: new Types.ObjectId(id) }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -41,7 +41,7 @@ export class NoteRepository {
 
   async updateNote(id: string, body: UpdateNoteDto): Promise<Note> {
     try {
-      return this.model
+      return await this.model
         .findOneAndUpdate({ _id: new Types.ObjectId(id) }, body, { new: true })
         .exec();
     } catch (error) {
@@ -51,7 +51,7 @@ export class NoteRepository {
 
   async deleteNote(id: string): Promise<Note> {
     try {
-      return this.model
+      return await this.model
         .findOneAndDelete({ _id: new Types.ObjectId(id) })
         .exec();
     } catch (error) {
@@ -61,7 +61,7 @@ export class NoteRepository {
 
   async deleteAllNotes(): Promise<any> {
     try {
-      return this.model.deleteMany().exec();
+      return await this.model.deleteMany().exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
