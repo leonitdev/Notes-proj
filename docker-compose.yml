@@ -1,0 +1,11 @@
+version: '3.2'
+services:
+  nest-project:
+    build:
+      context: .
+      dockerfile: 'Dockerfile'
+    ports:
+      - '4000:4000'
+    environment:
+      - MONGO_CONNECTION_STRING=${MONGO_CONNECTION_STRING}
+      - PORT=${PORT}
